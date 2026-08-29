@@ -1,0 +1,279 @@
+{
+  "name": "Narra & Co. — Website Inquiry Intake",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## START HERE — 3 things to set up\n\n**1. Google Sheets node**\nClick it, connect your Google account, then paste your Sheet ID where it says `PASTE_YOUR_GOOGLE_SHEET_ID_HERE`.\n\nThe Sheet ID is the long code in your spreadsheet's web address:\n`docs.google.com/spreadsheets/d/`**`THIS_PART`**`/edit`\n\nYour sheet tab must be named **Inquiries** with these exact column headers in row 1:\n\n`Timestamp` · `Name` · `Email` · `Phone` · `Product` · `Preferred Date` · `Message` · `Status`\n\n**2. Email node** (optional)\nIt is switched OFF so the workflow runs without it. To turn it on: connect Gmail, change the To address, then right-click the node → Activate.\n\n**3. Activate the workflow** (toggle, top right)\nThen open the Webhook node and copy the **Production URL** into `script.js` on your website.",
+        "height": 620,
+        "width": 460,
+        "color": 4
+      },
+      "id": "sticky-setup",
+      "name": "Setup Instructions",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-780, 60]
+    },
+    {
+      "parameters": {
+        "content": "## The flow, in plain language\n\n**Webhook** catches the form submission from your website.\n\n**Clean & Check** tidies the text and makes sure a name, email, and phone actually arrived.\n\n**Is it valid?** splits the path: good inquiries go up, incomplete ones go down.\n\n**Save to Sheet** adds one row. If Google is down, the red output sends a polite failure back instead of leaving the customer waiting.\n\n**Reply** nodes send `{\"success\": true}` back — that exact word is what your website is listening for.",
+        "height": 400,
+        "width": 420,
+        "color": 7
+      },
+      "id": "sticky-flow",
+      "name": "How It Works",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-780, 700]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "narra-inquiry",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "webhook-inquiry",
+      "name": "Website Inquiry Form",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-260, 380],
+      "webhookId": "narra-inquiry-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Your website POSTs JSON, and n8n tucks it inside `body`.\n// This node tidies the text and checks the required fields.\n\nconst incoming = $input.first().json;\nconst body = incoming.body || incoming;\n\nconst clean = (value) => (typeof value === 'string' ? value.trim() : '');\n\nconst name    = clean(body.name);\nconst email   = clean(body.email);\nconst phone   = clean(body.phone);\nconst product = clean(body.product) || 'Not specified';\nconst date    = clean(body.date);\nconst message = clean(body.message);\n\nconst emailLooksReal = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email);\n\nconst missing = [];\nif (!name) missing.push('name');\nif (!email) missing.push('email');\nelse if (!emailLooksReal) missing.push('a valid email');\nif (!phone) missing.push('phone');\n\nreturn [{\n  json: {\n    isValid: missing.length === 0,\n    missing: missing.join(', '),\n    receivedAt: new Date().toISOString(),\n    receivedAtManila: new Date().toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),\n    name,\n    email,\n    phone,\n    product,\n    preferredDate: date || 'No preference given',\n    message: message || '(no message left)'\n  }\n}];"
+      },
+      "id": "code-clean",
+      "name": "Clean & Check the Details",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-40, 380]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid-check",
+              "leftValue": "={{ $json.isValid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-valid",
+      "name": "Is the Inquiry Complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [200, 380]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "PASTE_YOUR_GOOGLE_SHEET_ID_HERE",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Inquiries",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $json.receivedAtManila }}",
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Phone": "={{ $json.phone }}",
+            "Product": "={{ $json.product }}",
+            "Preferred Date": "={{ $json.preferredDate }}",
+            "Message": "={{ $json.message }}",
+            "Status": "New"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "sheets-append",
+      "name": "Save to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [460, 260],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "hello@narraandco.ph",
+        "subject": "=New inquiry: {{ $('Clean & Check the Details').item.json.product }} — {{ $('Clean & Check the Details').item.json.name }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family: Arial, sans-serif; color: #3B2A21; line-height: 1.6;\">\n  <h2 style=\"color: #C4643B; margin-bottom: 4px;\">New inquiry from the website</h2>\n  <p style=\"color: #7A6555; margin-top: 0;\">{{ $('Clean & Check the Details').item.json.receivedAtManila }}</p>\n  <table cellpadding=\"8\" style=\"border-collapse: collapse; margin-top: 16px;\">\n    <tr><td><strong>Name</strong></td><td>{{ $('Clean & Check the Details').item.json.name }}</td></tr>\n    <tr><td><strong>Email</strong></td><td>{{ $('Clean & Check the Details').item.json.email }}</td></tr>\n    <tr><td><strong>Phone</strong></td><td>{{ $('Clean & Check the Details').item.json.phone }}</td></tr>\n    <tr><td><strong>Product</strong></td><td>{{ $('Clean & Check the Details').item.json.product }}</td></tr>\n    <tr><td><strong>Preferred date</strong></td><td>{{ $('Clean & Check the Details').item.json.preferredDate }}</td></tr>\n    <tr><td valign=\"top\"><strong>Message</strong></td><td>{{ $('Clean & Check the Details').item.json.message }}</td></tr>\n  </table>\n  <p style=\"margin-top: 20px; color: #7A6555;\">Reply within 24 hours to keep the promise on the website.</p>\n</div>",
+        "options": {}
+      },
+      "id": "gmail-notify",
+      "name": "Email Me the Inquiry",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [700, 260],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Inquiry received! We'll get back to you within 24 hours.\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-success",
+      "name": "Reply: Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [940, 260]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: 'Please add your ' + $json.missing + '.' }) }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-invalid",
+      "name": "Reply: Missing Details",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [460, 540]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"error\": \"We couldn't save your inquiry just now. Please try again in a moment.\"\n}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-error",
+      "name": "Reply: Something Went Wrong",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, 420]
+    }
+  ],
+  "connections": {
+    "Website Inquiry Form": {
+      "main": [
+        [
+          {
+            "node": "Clean & Check the Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clean & Check the Details": {
+      "main": [
+        [
+          {
+            "node": "Is the Inquiry Complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is the Inquiry Complete?": {
+      "main": [
+        [
+          {
+            "node": "Save to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply: Missing Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "Email Me the Inquiry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply: Something Went Wrong",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Me the Inquiry": {
+      "main": [
+        [
+          {
+            "node": "Reply: Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

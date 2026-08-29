@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ===================================================================
+     SEO — this is what shows up in Google and when you share the link.
+     Edit the two lines below to change it.
+     =================================================================== -->
+<title>Narra &amp; Co. Home Furniture — Warm, Modern Filipino Furniture</title>
+<meta name="description" content="Narra &amp; Co. makes warm, modern furniture for the Filipino home. Sofas, dining sets, beds, and desks in four hand-picked colourways. Browse the collection and inquire today.">
+<meta property="og:title" content="Narra &amp; Co. Home Furniture">
+<meta property="og:description" content="Warm, modern furniture for the Filipino home. Browse the collection and inquire today.">
+<meta property="og:image" content="images/hero-living-room.png">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F7F2EA">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Skip link: lets keyboard users jump straight to the products. -->
+<a class="skip-link" href="#catalog">Skip to the collection</a>
+
+<!-- =====================================================
+     HEADER — stays at the top of the screen as you scroll
+     ===================================================== -->
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">N</span>
+      <span class="brand-name">Narra &amp; Co.</span>
+    </a>
+    <nav class="site-nav" aria-label="Main">
+      <a href="#catalog">Collection</a>
+      <a href="#about">Our Story</a>
+      <a href="#inquire" class="nav-cta">Inquire</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- =====================================================
+       1. HERO
+       ===================================================== -->
+  <section class="hero">
+    <img class="hero-image" src="images/hero-living-room.png" alt="A warmly lit living room with a terracotta sofa, armchair, and coffee table" fetchpriority="high">
+    <div class="hero-overlay"></div>
+    <div class="wrap hero-content">
+      <p class="hero-eyebrow">Made in the Philippines</p>
+      <h1 class="hero-title">Narra &amp; Co.<br>Home Furniture</h1>
+      <p class="hero-tagline">Warm, modern pieces built to live with — not just to look at.</p>
+      <a href="#catalog" class="btn btn-primary btn-large">Browse the collection</a>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       2. CATALOG — the grid is built by script.js
+       ===================================================== -->
+  <section id="catalog" class="section">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">The Collection</p>
+        <h2>Every piece, every colourway</h2>
+        <p class="section-sub">Twelve designs, each offered in Terracotta, Sage, Navy, and Mustard. Filter by room to narrow things down.</p>
+      </header>
+
+      <!-- Filter buttons. script.js fills these in from the product data. -->
+      <div class="filters" id="filters" role="group" aria-label="Filter products by category"></div>
+
+      <p class="result-count" id="resultCount" aria-live="polite"></p>
+
+      <!-- The product cards get inserted here. Do not type cards by hand —
+           edit the PRODUCTS list at the top of script.js instead. -->
+      <div class="product-grid" id="productGrid"></div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       3. ABOUT
+       ===================================================== -->
+  <section id="about" class="section section-alt">
+    <div class="wrap about-grid">
+      <div class="about-media">
+        <img src="images/hero-bedroom.png" alt="A calm bedroom with a queen bed in soft sage and a wooden wardrobe" loading="lazy">
+      </div>
+      <div class="about-text">
+        <p class="eyebrow">Our Story</p>
+        <h2>Furniture that feels like home</h2>
+        <p>We started Narra &amp; Co. because we kept walking into showrooms full of furniture that looked beautiful and felt like nobody lived there. So we make the other kind — pieces with soft edges, honest materials, and colours that warm up a room the moment they arrive.</p>
+        <p>Everything is designed here and built with local craftspeople, in small runs. That means we know who made your sofa, and we can tell you when it will land at your door.</p>
+        <ul class="about-points">
+          <li><strong>Made locally</strong> — designed and built in the Philippines</li>
+          <li><strong>Four colourways</strong> — Terracotta, Sage, Navy, Mustard</li>
+          <li><strong>Small batches</strong> — no warehouse full of the same chair</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       HOW ORDERING WORKS
+       ===================================================== -->
+  <section class="section steps-section">
+    <div class="wrap">
+      <header class="section-head">
+        <p class="eyebrow">Simple &amp; Human</p>
+        <h2>How ordering works</h2>
+      </header>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-number">1</span>
+          <h3>Inquire</h3>
+          <p>Tell us which piece caught your eye. No account, no checkout — just a short message.</p>
+        </li>
+        <li class="step">
+          <span class="step-number">2</span>
+          <h3>We confirm availability &amp; delivery</h3>
+          <p>We reply within 24 hours with stock, lead time, and a delivery quote for your address.</p>
+        </li>
+        <li class="step">
+          <span class="step-number">3</span>
+          <h3>Pay 50% to reserve</h3>
+          <p>Half now to hold your piece, half on delivery. That's it — no surprises.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       4. INQUIRY FORM
+       ===================================================== -->
+  <section id="inquire" class="section section-alt">
+    <div class="wrap form-wrap">
+      <header class="section-head">
+        <p class="eyebrow">Get in Touch</p>
+        <h2>Ask about a piece</h2>
+        <p class="section-sub">Fill this in and we'll get back to you within 24 hours. Nothing is charged, and nothing is committed.</p>
+      </header>
+
+      <form id="inquiryForm" class="inquiry-form" novalidate>
+        <div class="field">
+          <label for="name">Your name <span class="req">*</span></label>
+          <input type="text" id="name" name="name" autocomplete="name" required placeholder="Juan dela Cruz">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email <span class="req">*</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" required placeholder="juan@email.com">
+          </div>
+          <div class="field">
+            <label for="phone">Phone <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required placeholder="0917 123 4567">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="product">Product I'm interested in</label>
+          <!-- The options in here are built by script.js from the SAME
+               product list that builds the grid. -->
+          <select id="product" name="product"></select>
+        </div>
+
+        <div class="field">
+          <label for="date">Preferred contact date</label>
+          <input type="date" id="date" name="date">
+          <p class="hint">When's a good day for us to reach out?</p>
+        </div>
+
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="4" placeholder="Anything you'd like us to know — your room size, delivery area, timeline…"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary btn-large btn-block">Inquire</button>
+        <p class="form-status" id="formStatus" role="alert"></p>
+        <p class="form-fineprint">We only use your details to answer this inquiry. No newsletters, no sharing.</p>
+      </form>
+
+      <!-- Hidden until the inquiry sends successfully. -->
+      <div id="successPanel" class="success-panel" hidden>
+        <div class="success-check" aria-hidden="true">✓</div>
+        <h3>Inquiry received! We'll get back to you within 24 hours.</h3>
+        <p>Thanks for reaching out — keep an eye on your inbox, and check your spam folder just in case.</p>
+        <button type="button" class="btn btn-ghost" id="anotherBtn">Send another inquiry</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- =====================================================
+     FOOTER
+     ↓↓↓ EDIT YOUR REAL CONTACT DETAILS HERE ↓↓↓
+     ===================================================== -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="brand-mark">N</span>
+      <div>
+        <p class="footer-name">Narra &amp; Co. Home Furniture</p>
+        <p class="footer-line">Warm, modern pieces for the Filipino home.</p>
+      </div>
+    </div>
+    <div class="footer-contact">
+      <p><a href="mailto:hello@narraandco.ph">hello@narraandco.ph</a></p>
+      <p><a href="tel:+63288880000">+63 2 8888 0000</a></p>
+      <p>Showroom: Makati City</p>
+      <p>Mon–Sat, 10am–7pm</p>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <p>&copy; <span id="year"></span> Narra &amp; Co. Home Furniture. All rights reserved.</p>
+  </div>
+</footer>
+<!-- ↑↑↑ END OF EDITABLE CONTACT DETAILS ↑↑↑ -->
+
+<script src="script.js"></script>
+</body>
+</html>
